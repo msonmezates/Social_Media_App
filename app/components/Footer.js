@@ -1,25 +1,26 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default () => (
   <footer className="border-top text-center small text-muted py-3">
     <p>
-      <a href="/" className="mx-1">
+      <Link to="/" className="mx-1">
         Home
-      </a>{" "}
+      </Link>{" "}
       |
-      <a className="mx-1" href="/about-us">
+      <Link to="/about-us" className="mx-1">
         About Us
-      </a>{" "}
+      </Link>{" "}
       |
-      <a className="mx-1" href="/terms">
+      <Link to="/terms" className="mx-1">
         Terms
-      </a>
+      </Link>
     </p>
     <p className="m-0">
       Copyright &copy; 2020{" "}
-      <a href="/" className="text-muted">
+      <Link to="/" className="text-muted">
         ComplexApp
-      </a>
+      </Link>
       . All rights reserved.
     </p>
   </footer>
