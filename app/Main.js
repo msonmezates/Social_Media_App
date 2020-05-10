@@ -1,15 +1,23 @@
+// React
 import React from "react";
 import ReactDOM from "react-dom";
 
-const ExampleComponent = () => {
+// Components
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import HomeGuest from "./components/HomeGuest";
+
+const Main = () => {
   return (
     <>
-      <h1>TEST</h1>
+      <Header />
+      <HomeGuest />
+      <Footer />
     </>
   );
 };
 
-ReactDOM.render(<ExampleComponent />, document.getElementById("app"));
+ReactDOM.render(<Main />, document.getElementById("app"));
 
 // Load changes asynchronously without refreshing page
 if (module.hot) {
