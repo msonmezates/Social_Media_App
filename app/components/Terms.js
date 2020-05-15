@@ -1,7 +1,8 @@
 import React from "react";
+import Page from "./Page";
 
 export default () => (
-  <div className="container container--narrow py-md-5">
+  <Page title="Terms & Conditions">
     <h2>Our Terms &amp; Conditions</h2>
     <p className="lead text-muted">
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis dolorum
@@ -30,5 +31,5 @@ export default () => (
       sed harum laborum, nemo odio animi officia quisquam. Veniam, natus
       reprehenderit.
     </p>
-  </div>
+  </Page>
 );

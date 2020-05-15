@@ -1,7 +1,8 @@
 import React from "react";
+import Page from "./Page";
 
 export default () => (
-  <div className="container py-md-5">
+  <Page wide={true} title="Home">
     <div className="row align-items-center">
       <div className="col-lg-7 py-3 py-md-5">
         <h1 className="display-3">Remember Writing?</h1>
@@ -61,5 +62,5 @@ export default () => (
         </form>
       </div>
     </div>
-  </div>
+  </Page>
 );
