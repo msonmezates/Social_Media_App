@@ -1,6 +1,13 @@
 import React from "react";
 
 export default props => {
+  const handleLogOut = () => {
+    props.setIsLoggedIn(false);
+    props.setIsLoggedIn(localStorage.removeItem("appToken"));
+    props.setIsLoggedIn(localStorage.removeItem("appUsername"));
+    props.setIsLoggedIn(localStorage.removeItem("appAvatar"));
+  };
+
   return (
     <div className="flex-row my-3 my-md-0">
       <a href="#" className="text-white mr-2 header-search-icon">
@@ -13,16 +20,13 @@ export default props => {
       <a href="#" className="mr-2">
         <img
           className="small-header-avatar"
-          src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128"
+          src={localStorage.getItem("appAvatar")}
         />
       </a>
       <a className="btn btn-sm btn-success mr-2" href="/create-post">
         Create Post
       </a>
-      <button
-        className="btn btn-sm btn-secondary"
-        onClick={() => props.setIsLoggedIn(false)}
-      >
+      <button className="btn btn-sm btn-secondary" onClick={handleLogOut}>
         Sign Out
       </button>
     </div>
