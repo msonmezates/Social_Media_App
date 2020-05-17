@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default props => {
   const handleLogOut = () => {
@@ -23,9 +24,9 @@ export default props => {
           src={localStorage.getItem("appAvatar")}
         />
       </a>
-      <a className="btn btn-sm btn-success mr-2" href="/create-post">
+      <Link className="btn btn-sm btn-success mr-2" to="/create-post">
         Create Post
-      </a>
+      </Link>
       <button className="btn btn-sm btn-secondary" onClick={handleLogOut}>
         Sign Out
       </button>

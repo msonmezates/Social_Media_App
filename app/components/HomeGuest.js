@@ -10,7 +10,7 @@ export default () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/register", {
+      await axios.post("/register", {
         username,
         email,
         password

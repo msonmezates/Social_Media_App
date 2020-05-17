@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import axios from "axios";
 
 // Components
 import Header from "./components/Header";
@@ -10,6 +11,9 @@ import HomeGuest from "./components/HomeGuest";
 import About from "./components/About";
 import Terms from "./components/Terms";
 import Home from "./components/Home";
+import CreatePost from "./components/CreatePost";
+
+axios.defaults.baseURL = "http://localhost:8080";
 
 const Main = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -29,6 +33,7 @@ const Main = () => {
         <Route path="/terms">
           <Terms />
         </Route>
+        <Route path="/create-post">{isLoggedIn && <CreatePost />}</Route>
       </Switch>
       <Footer />
     </BrowserRouter>
