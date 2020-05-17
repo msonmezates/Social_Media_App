@@ -12,6 +12,7 @@ import About from "./components/About";
 import Terms from "./components/Terms";
 import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
+import ViewSinglePost from "./components/ViewSinglePost";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
@@ -32,6 +33,9 @@ const Main = () => {
         </Route>
         <Route path="/terms">
           <Terms />
+        </Route>
+        <Route path="/post/:id">
+          <ViewSinglePost />
         </Route>
         <Route path="/create-post">{isLoggedIn && <CreatePost />}</Route>
       </Switch>
