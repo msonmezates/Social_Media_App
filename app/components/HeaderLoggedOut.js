@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-export default () => {
+export default props => {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
 
@@ -14,6 +14,7 @@ export default () => {
       });
       if (response?.data) {
         console.log(response.data);
+        props.setIsLoggedIn(true);
       } else {
         console.log("incorrect entry");
       }
