@@ -3,7 +3,7 @@ import Page from "./Page";
 
 export default () => {
   return (
-    <Page title="Post TEST">
+    <Page title="Post">
       <div className="d-flex justify-content-between">
         <h2>Example Post Title</h2>
         <span className="pt-2">

@@ -16,6 +16,7 @@ const CreatePost = props => {
         token: localStorage.getItem("appToken")
       });
       if (response?.data) {
+        props.addFlashMessage("New post is created");
         // Redirect to the new page with post
         const postId = response.data;
         props.history.push(`/post/${postId}`);
