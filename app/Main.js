@@ -14,6 +14,7 @@ import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
+import ThemeContext from "./ThemeContext";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
@@ -28,28 +29,28 @@ const Main = () => {
   };
 
   return (
-    <BrowserRouter>
-      <FlashMessages messages={flashMessages} />
-      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      <Switch>
-        <Route path="/" exact>
-          {isLoggedIn ? <Home /> : <HomeGuest />}
-        </Route>
-        <Route path="/about-us">
-          <About />
-        </Route>
-        <Route path="/terms">
-          <Terms />
-        </Route>
-        <Route path="/post/:id">
-          <ViewSinglePost />
-        </Route>
-        <Route path="/create-post">
-          {isLoggedIn && <CreatePost addFlashMessage={addFlashMessage} />}
-        </Route>
-      </Switch>
-      <Footer />
-    </BrowserRouter>
+    <ThemeContext.Provider value={{ addFlashMessage, setIsLoggedIn }}>
+      <BrowserRouter>
+        <FlashMessages messages={flashMessages} />
+        <Header isLoggedIn={isLoggedIn} />
+        <Switch>
+          <Route path="/" exact>
+            {isLoggedIn ? <Home /> : <HomeGuest />}
+          </Route>
+          <Route path="/about-us">
+            <About />
+          </Route>
+          <Route path="/terms">
+            <Terms />
+          </Route>
+          <Route path="/post/:id">
+            <ViewSinglePost />
+          </Route>
+          <Route path="/create-post">{isLoggedIn && <CreatePost />}</Route>
+        </Switch>
+        <Footer />
+      </BrowserRouter>
+    </ThemeContext.Provider>
   );
 };
 

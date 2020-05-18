@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import ThemeContext from "../ThemeContext";
 
 export default props => {
+  const { setIsLoggedIn } = useContext(ThemeContext);
+
   const handleLogOut = () => {
-    props.setIsLoggedIn(false);
-    props.setIsLoggedIn(localStorage.removeItem("appToken"));
-    props.setIsLoggedIn(localStorage.removeItem("appUsername"));
-    props.setIsLoggedIn(localStorage.removeItem("appAvatar"));
+    setIsLoggedIn(false);
+    setIsLoggedIn(localStorage.removeItem("appToken"));
+    setIsLoggedIn(localStorage.removeItem("appUsername"));
+    setIsLoggedIn(localStorage.removeItem("appAvatar"));
   };
 
   return (

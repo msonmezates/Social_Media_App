@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import HeaderLoggedIn from "./HeaderLoggedIn";
 import HeaderLoggedOut from "./HeaderLoggedOut";
@@ -12,11 +12,7 @@ export default ({ isLoggedIn, setIsLoggedIn }) => {
             ComplexApp
           </Link>
         </h4>
-        {isLoggedIn ? (
-          <HeaderLoggedIn setIsLoggedIn={setIsLoggedIn} />
-        ) : (
-          <HeaderLoggedOut setIsLoggedIn={setIsLoggedIn} />
-        )}
+        {isLoggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}
       </div>
     </header>
   );

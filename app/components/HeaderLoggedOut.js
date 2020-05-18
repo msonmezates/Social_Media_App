@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
+import ThemeContext from "../ThemeContext";
 
 export default props => {
+  const { setIsLoggedIn } = useContext(ThemeContext);
+
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
 
@@ -16,7 +19,7 @@ export default props => {
         localStorage.setItem("appToken", response.data.token);
         localStorage.setItem("appUsername", response.data.username);
         localStorage.setItem("appAvatar", response.data.avatar);
-        props.setIsLoggedIn(true);
+        setIsLoggedIn(true);
       } else {
         console.log("incorrect entry");
       }

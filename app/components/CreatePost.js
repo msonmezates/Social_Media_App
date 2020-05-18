@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import Page from "./Page";
+import ThemeContext from "../ThemeContext";
 
 const CreatePost = props => {
   const [title, setTitle] = useState();
   const [body, setBody] = useState();
+  const { addFlashMessage } = useContext(ThemeContext);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -16,7 +18,7 @@ const CreatePost = props => {
         token: localStorage.getItem("appToken")
       });
       if (response?.data) {
-        props.addFlashMessage("New post is created");
+        addFlashMessage("New post is created");
         // Redirect to the new page with post
         const postId = response.data;
         props.history.push(`/post/${postId}`);
