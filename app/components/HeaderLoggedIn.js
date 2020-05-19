@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import ThemeContext from "../ThemeContext";
+import DispatchContext from "../DispatchContext";
 
 export default props => {
-  const { setIsLoggedIn } = useContext(ThemeContext);
+  const appDispatch = useContext(DispatchContext);
 
   const handleLogOut = () => {
-    setIsLoggedIn(false);
-    setIsLoggedIn(localStorage.removeItem("appToken"));
-    setIsLoggedIn(localStorage.removeItem("appUsername"));
-    setIsLoggedIn(localStorage.removeItem("appAvatar"));
+    appDispatch({ type: "logout" });
+    localStorage.removeItem("appToken");
+    localStorage.removeItem("appUsername");
+    localStorage.removeItem("appAvatar");
   };
 
   return (

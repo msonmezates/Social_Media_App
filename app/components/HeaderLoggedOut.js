@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import ThemeContext from "../ThemeContext";
+import DispatchContext from "../DispatchContext";
 
 export default props => {
-  const { setIsLoggedIn } = useContext(ThemeContext);
+  const appDispatch = useContext(DispatchContext);
 
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
@@ -19,7 +19,7 @@ export default props => {
         localStorage.setItem("appToken", response.data.token);
         localStorage.setItem("appUsername", response.data.username);
         localStorage.setItem("appAvatar", response.data.avatar);
-        setIsLoggedIn(true);
+        appDispatch({ type: "login" });
       } else {
         console.log("incorrect entry");
       }
