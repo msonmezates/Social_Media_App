@@ -2,6 +2,7 @@
 import React, { useState, useReducer } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { useImmerReducer } from "use-immer";
 import axios from "axios";
 
 // Context API
@@ -30,20 +31,20 @@ const Main = () => {
   const reducer = (state = initialState, action) => {
     switch (action.type) {
       case "login":
-        return { ...state, isLoggedIn: true };
+        state.isLoggedIn = true;
+        break;
       case "logout":
-        return { ...state, isLoggedIn: false };
+        state.isLoggedIn = false;
+        break;
       case "flashMessage":
-        return {
-          ...state,
-          flashMessages: state.flashMessages.concat(action.value)
-        };
+        state.flashMessages.push(action.value);
+        break;
       default:
         return state;
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useImmerReducer(reducer, initialState);
 
   return (
     <StateContext.Provider value={state}>
