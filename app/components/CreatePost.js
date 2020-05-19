@@ -3,11 +3,14 @@ import { withRouter } from "react-router-dom";
 import axios from "axios";
 import Page from "./Page";
 import DispatchContext from "../DispatchContext";
+import StateContext from "../StateContext";
 
 const CreatePost = props => {
   const [title, setTitle] = useState();
   const [body, setBody] = useState();
+
   const appDispatch = useContext(DispatchContext);
+  const appState = useContext(StateContext);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -15,7 +18,7 @@ const CreatePost = props => {
       const response = await axios.post("/create-post", {
         title,
         body,
-        token: localStorage.getItem("appToken")
+        token: appState.user.token
       });
       if (response?.data) {
         // Show toaster
