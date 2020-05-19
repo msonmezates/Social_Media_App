@@ -1,5 +1,5 @@
 // React
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { useImmerReducer } from "use-immer";
@@ -25,13 +25,19 @@ axios.defaults.baseURL = "http://localhost:8080";
 const Main = () => {
   const initialState = {
     isLoggedIn: Boolean(localStorage.getItem("appToken")),
-    flashMessages: []
+    flashMessages: [],
+    user: {
+      token: localStorage.getItem("appToken") || "",
+      username: localStorage.getItem("appUsername") || "",
+      avatar: localStorage.getItem("appAvatar") || ""
+    }
   };
 
-  const reducer = (state = initialState, action) => {
+  const reducer = (state, action) => {
     switch (action.type) {
       case "login":
         state.isLoggedIn = true;
+        state.user = action.value;
         break;
       case "logout":
         state.isLoggedIn = false;
@@ -45,6 +51,18 @@ const Main = () => {
   };
 
   const [state, dispatch] = useImmerReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (state.isLoggedIn) {
+      localStorage.setItem("appToken", state.user.token);
+      localStorage.setItem("appUsername", state.user.username);
+      localStorage.setItem("appAvatar", state.user.avatar);
+    } else {
+      localStorage.removeItem("appToken");
+      localStorage.removeItem("appUsername");
+      localStorage.removeItem("appAvatar");
+    }
+  }, [state.isLoggedIn]);
 
   return (
     <StateContext.Provider value={state}>

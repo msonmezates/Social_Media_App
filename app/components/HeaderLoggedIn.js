@@ -7,9 +7,6 @@ export default props => {
 
   const handleLogOut = () => {
     appDispatch({ type: "logout" });
-    localStorage.removeItem("appToken");
-    localStorage.removeItem("appUsername");
-    localStorage.removeItem("appAvatar");
   };
 
   return (
