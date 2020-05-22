@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Page from "./Page";
 import axios from "axios";
 
@@ -53,10 +53,14 @@ export default () => {
       </div>
 
       <p className="text-muted small mb-4">
-        <a href="#">
+        <Link to={`/profile/${post.author.username}`}>
           <img className="avatar-tiny" src={post.author.avatar} />
-        </a>
-        Posted by <a href="#">{post.author.username}</a> on {formattedDate}
+        </Link>
+        Posted by{" "}
+        <Link to={`/profile/${post.author.username}`}>
+          {post.author.username}
+        </Link>{" "}
+        on {formattedDate}
       </p>
 
       <div className="body-content">{post.body}</div>
