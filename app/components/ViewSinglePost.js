@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import Page from "./Page";
 import axios from "axios";
+import Page from "./Page";
+import Loader from "./Loader";
 
 export default () => {
   const postId = useParams().id;
@@ -28,7 +29,7 @@ export default () => {
   if (isLoading) {
     return (
       <Page title="...">
-        <div>Loading...</div>
+        <Loader />
       </Page>
     );
   }
