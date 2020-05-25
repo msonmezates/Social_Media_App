@@ -11,18 +11,28 @@ export default () => {
   const { username } = useParams();
 
   useEffect(() => {
+    // Create a cancel token
+    const ourRequest = axios.CancelToken.source();
+
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`/profile/${username}/posts`);
+        const response = await axios.get(`/profile/${username}/posts`, {
+          cancelToken: ourRequest.token
+        });
         if (response?.data) {
           setPosts(response.data);
           setIsLoading(false);
         }
       } catch (e) {
-        console.error("There was an error", e);
+        console.error("There was an error or network request was cancelled", e);
       }
     };
     fetchPosts();
+
+    // Cleanup function in case network request is cancelled
+    return () => {
+      ourRequest.cancel();
+    };
   }, []);
 
   if (isLoading) return <Loader />;

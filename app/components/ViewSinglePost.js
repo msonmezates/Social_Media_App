@@ -11,19 +11,28 @@ export default () => {
   const [post, setPost] = useState({});
 
   useEffect(() => {
+    // Create a cancel token
+    const ourRequest = axios.CancelToken.source();
+
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/post/${postId}`);
-        console.log(response.data);
+        const response = await axios.get(`/post/${postId}`, {
+          cancelToken: ourRequest.token
+        });
         if (response?.data) {
           setPost(response.data);
           setIsLoading(false);
         }
       } catch (e) {
-        console.error("Something went wrong", e);
+        console.error("Something went wrong or the request was cancelled", e);
       }
     };
     fetchPost();
+
+    // This return statement is for cleanup
+    return () => {
+      ourRequest.cancel();
+    };
   }, []);
 
   if (isLoading) {

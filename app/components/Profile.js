@@ -22,21 +22,33 @@ export default () => {
   });
 
   useEffect(() => {
+    // Create cancel token
+    const ourRequest = axios.CancelToken.source();
+
     // useEffect can't take async directly
     const fetchData = async () => {
       try {
-        const response = await axios.post(`/profile/${username}`, {
-          token
-        });
+        const response = await axios.post(
+          `/profile/${username}`,
+          {
+            token
+          },
+          { cancelToken: ourRequest.token }
+        );
         if (response?.data) {
           setProfileData(response.data);
         }
       } catch (e) {
-        console.error("There was an error", e);
+        console.error("There was an error or network request was cancelled", e);
       }
     };
 
     fetchData();
+
+    // Cleanup function in case network request is cancelled
+    return () => {
+      ourRequest.cancel();
+    };
   }, []);
 
   return (
