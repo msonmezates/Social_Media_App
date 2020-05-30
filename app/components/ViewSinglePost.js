@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import ReactTooltip from "react-tooltip";
+
 import axios from "axios";
+
 import Page from "./Page";
 import Loader from "./Loader";
 
@@ -53,12 +57,23 @@ export default () => {
       <div className="d-flex justify-content-between">
         <h2>{post.title}</h2>
         <span className="pt-2">
-          <a href="#" className="text-primary mr-2" title="Edit">
+          <a
+            href="#"
+            className="text-primary mr-2"
+            data-tip="Edit"
+            data-for="edit"
+          >
             <i className="fas fa-edit"></i>
           </a>
-          <a className="delete-post-button text-danger" title="Delete">
+          <ReactTooltip id="edit" className="custom-tooltip" />{" "}
+          <a
+            className="delete-post-button text-danger"
+            data-tip="Delete"
+            data-for="delete"
+          >
             <i className="fas fa-trash"></i>
           </a>
+          <ReactTooltip id="delete" className="custom-tooltip" />
         </span>
       </div>
 
@@ -73,7 +88,21 @@ export default () => {
         on {formattedDate}
       </p>
 
-      <div className="body-content">{post.body}</div>
+      {/* Body can support markdown */}
+      <div className="body-content">
+        <ReactMarkdown
+          source={post.body}
+          allowedTypes={[
+            "paragraph",
+            "strong",
+            "emphasis",
+            "text",
+            "heading",
+            "list",
+            "listItem"
+          ]}
+        />
+      </div>
     </Page>
   );
 };
