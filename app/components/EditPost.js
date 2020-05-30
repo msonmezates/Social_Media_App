@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link, withRouter } from "react-router-dom";
 import { useImmerReducer } from "use-immer";
 
 import axios from "axios";
@@ -9,8 +9,9 @@ import DispatchContext from "../DispatchContext";
 import Page from "./Page";
 import Loader from "./Loader";
 import FlashMessages from "./FlashMessages";
+import NotFound from "./NotFound";
 
-export default () => {
+const EditPost = props => {
   const context = useContext(StateContext);
   const appDispatch = useContext(DispatchContext);
 
@@ -28,7 +29,8 @@ export default () => {
     isFetching: true,
     isSaving: false,
     id: useParams().id,
-    sendCount: 0
+    sendCount: 0,
+    notFound: false
   };
 
   const myReducer = (state, action) => {
@@ -71,6 +73,9 @@ export default () => {
           state.body.hasErrors = false;
         }
         break;
+      case "notFound":
+        state.notFound = true;
+        break;
       default:
         return state;
     }
@@ -85,6 +90,7 @@ export default () => {
     dispatch({ type: "submitRequest" });
   };
 
+  // initial load
   useEffect(() => {
     // Create a cancel token
     const ourRequest = axios.CancelToken.source();
@@ -96,6 +102,18 @@ export default () => {
         });
         if (response?.data) {
           dispatch({ type: "fetchComplete", value: response.data });
+          // handle if user isn't authorized
+          if (response.data?.author?.username !== context.user.username) {
+            appDispatch({
+              type: "flashMessage",
+              value: "You do not have permission to edit the post"
+            });
+            // redirect to homepage
+            props.history.push("/");
+          }
+        } else {
+          // if id doesn't exist
+          dispatch({ type: "notFound" });
         }
       } catch (e) {
         console.error("Something went wrong or the request was cancelled", e);
@@ -109,6 +127,7 @@ export default () => {
     };
   }, []);
 
+  // update form request
   useEffect(() => {
     if (state.sendCount) {
       dispatch({ type: "saveRequestStarted" });
@@ -147,6 +166,10 @@ export default () => {
     }
   }, [state.sendCount]);
 
+  if (state.notFound) {
+    return <NotFound />;
+  }
+
   if (state.isFetching) {
     return (
       <Page title="...">
@@ -157,7 +180,10 @@ export default () => {
 
   return (
     <Page title="Edit Post">
-      <form onSubmit={handleFormSubmit}>
+      <Link className="small font-weight-bold" to={`/post/${state.id}`}>
+        &laquo; View Post
+      </Link>
+      <form onSubmit={handleFormSubmit} className="mt-3">
         <div className="form-group">
           <label htmlFor="post-title" className="text-muted mb-1">
             <small>Title</small>
@@ -216,3 +242,5 @@ export default () => {
     </Page>
   );
 };
+
+export default withRouter(EditPost);

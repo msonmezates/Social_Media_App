@@ -21,6 +21,7 @@ import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
+import NotFound from "./components/NotFound";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
@@ -89,10 +90,13 @@ const Main = () => {
               <EditPost />
             </Route>
             <Route path="/create-post">
-              {state.isLoggedIn && <CreatePost />}
+              <CreatePost />
             </Route>
             <Route path="/profile/:username">
               <Profile />
+            </Route>
+            <Route path="*">
+              <NotFound />
             </Route>
           </Switch>
           <Footer />

@@ -7,12 +7,14 @@ import axios from "axios";
 
 import Page from "./Page";
 import Loader from "./Loader";
+import NotFound from "./NotFound";
 
 export default () => {
   const postId = useParams().id;
 
   const [isLoading, setIsLoading] = useState(true);
   const [post, setPost] = useState({});
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     // Create a cancel token
@@ -26,6 +28,8 @@ export default () => {
         if (response?.data) {
           setPost(response.data);
           setIsLoading(false);
+        } else {
+          setNotFound(true);
         }
       } catch (e) {
         console.error("Something went wrong or the request was cancelled", e);
@@ -38,6 +42,10 @@ export default () => {
       ourRequest.cancel();
     };
   }, []);
+
+  if (notFound) {
+    return <NotFound />;
+  }
 
   if (isLoading) {
     return (
