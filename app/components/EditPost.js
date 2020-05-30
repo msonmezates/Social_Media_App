@@ -45,13 +45,31 @@ export default () => {
         state.body.value = action.value;
         break;
       case "submitRequest":
-        state.sendCount++;
+        if (!state.title.hasErrors && !state.body.hasErrors) {
+          state.sendCount++;
+        }
         break;
       case "saveRequestStarted":
         state.isSaving = true;
         break;
       case "saveRequestFinished":
         state.isSaving = false;
+        break;
+      case "titleValidation":
+        if (!action.value.trim()) {
+          state.title.hasErrors = true;
+          state.title.message = "Title cannot be empty!";
+        } else {
+          state.title.hasErrors = false;
+        }
+        break;
+      case "bodyValidation":
+        if (!action.value.trim()) {
+          state.body.hasErrors = true;
+          state.body.message = "Body cannot be empty!";
+        } else {
+          state.body.hasErrors = false;
+        }
         break;
       default:
         return state;
@@ -62,6 +80,8 @@ export default () => {
 
   const handleFormSubmit = e => {
     e.preventDefault();
+    dispatch({ type: "titleValidation", value: state.title.value });
+    dispatch({ type: "bodyValidation", value: state.body.value });
     dispatch({ type: "submitRequest" });
   };
 
@@ -154,7 +174,15 @@ export default () => {
             onChange={e =>
               dispatch({ type: "titleChange", value: e?.target?.value })
             }
+            onBlur={e =>
+              dispatch({ type: "titleValidation", value: e?.target?.value })
+            }
           />
+          {state.title.hasErrors && (
+            <div className="alert alert-danger small liveValidateMessage">
+              {state.title.message}
+            </div>
+          )}
         </div>
 
         <div className="form-group">
@@ -170,7 +198,15 @@ export default () => {
             onChange={e =>
               dispatch({ type: "bodyChange", value: e?.target?.value })
             }
+            onBlur={e =>
+              dispatch({ type: "bodyValidation", value: e?.target?.value })
+            }
           />
+          {state.body.hasErrors && (
+            <div className="alert alert-danger small liveValidateMessage">
+              {state.body.message}
+            </div>
+          )}
         </div>
 
         <button className="btn btn-primary" disabled={state.isSaving}>
