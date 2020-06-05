@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import ReactTooltip from "react-tooltip";
@@ -8,8 +8,12 @@ import axios from "axios";
 import Page from "./Page";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
+import StateContext from "../StateContext";
 
 export default () => {
+  const appState = useContext(StateContext);
+  console.log(appState);
+
   const postId = useParams().id;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +59,16 @@ export default () => {
     );
   }
 
+  const isOwner = () => {
+    if (
+      appState?.isLoggedIn &&
+      appState?.user?.username === post?.author?.username
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const date = new Date(post.createdDate);
   const formattedDate = `${
     date.getMonth() + 1
@@ -64,25 +78,27 @@ export default () => {
     <Page title={post.title}>
       <div className="d-flex justify-content-between">
         <h2>{post.title}</h2>
-        <span className="pt-2">
-          <Link
-            to={`/post/${post._id}/edit`}
-            className="text-primary mr-2"
-            data-tip="Edit"
-            data-for="edit"
-          >
-            <i className="fas fa-edit"></i>
-          </Link>
-          <ReactTooltip id="edit" className="custom-tooltip" />{" "}
-          <a
-            className="delete-post-button text-danger"
-            data-tip="Delete"
-            data-for="delete"
-          >
-            <i className="fas fa-trash"></i>
-          </a>
-          <ReactTooltip id="delete" className="custom-tooltip" />
-        </span>
+        {isOwner() && (
+          <span className="pt-2">
+            <Link
+              to={`/post/${post._id}/edit`}
+              className="text-primary mr-2"
+              data-tip="Edit"
+              data-for="edit"
+            >
+              <i className="fas fa-edit"></i>
+            </Link>
+            <ReactTooltip id="edit" className="custom-tooltip" />{" "}
+            <a
+              className="delete-post-button text-danger"
+              data-tip="Delete"
+              data-for="delete"
+            >
+              <i className="fas fa-trash"></i>
+            </a>
+            <ReactTooltip id="delete" className="custom-tooltip" />
+          </span>
+        )}
       </div>
 
       <p className="text-muted small mb-4">
