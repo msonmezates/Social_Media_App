@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, withRouter } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import ReactTooltip from "react-tooltip";
 
@@ -9,10 +9,11 @@ import Page from "./Page";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
 import StateContext from "../StateContext";
+import DispatchContext from "../DispatchContext";
 
-export default () => {
+const ViewSinglePost = props => {
   const appState = useContext(StateContext);
-  console.log(appState);
+  const appDispatch = useContext(DispatchContext);
 
   const postId = useParams().id;
 
@@ -59,6 +60,7 @@ export default () => {
     );
   }
 
+  // Show icons for authorized user only
   const isOwner = () => {
     if (
       appState?.isLoggedIn &&
@@ -69,10 +71,37 @@ export default () => {
     return false;
   };
 
-  const date = new Date(post.createdDate);
-  const formattedDate = `${
-    date.getMonth() + 1
-  }/${date.getDay()}/${date.getFullYear()}`;
+  const handleDeletePost = async () => {
+    const userResponse = window.confirm("Are you sure to delete the post");
+    if (userResponse) {
+      try {
+        const response = await axios.delete(`/post/${post?._id}`, {
+          data: {
+            token: appState.user.token
+          }
+        });
+        if (response?.data.toLowerCase() === "success") {
+          // show flash message
+          appDispatch({
+            type: "flashMessage",
+            value: "Post successfully deleted"
+          });
+          // redirect back to main profile page
+          props.history.push(`/profile/${appState.user.username}`);
+        }
+      } catch (e) {
+        console.error("There was an error", e);
+      }
+    }
+  };
+
+  const showFormattedDate = () => {
+    const date = new Date(post.createdDate);
+    const formattedDate = `${
+      date.getMonth() + 1
+    }/${date.getDay()}/${date.getFullYear()}`;
+    return formattedDate;
+  };
 
   return (
     <Page title={post.title}>
@@ -93,6 +122,7 @@ export default () => {
               className="delete-post-button text-danger"
               data-tip="Delete"
               data-for="delete"
+              onClick={handleDeletePost}
             >
               <i className="fas fa-trash"></i>
             </a>
@@ -109,7 +139,7 @@ export default () => {
         <Link to={`/profile/${post.author.username}`}>
           {post.author.username}
         </Link>{" "}
-        on {formattedDate}
+        on {showFormattedDate()}
       </p>
 
       {/* Body can support markdown */}
@@ -130,3 +160,5 @@ export default () => {
     </Page>
   );
 };
+
+export default withRouter(ViewSinglePost);
