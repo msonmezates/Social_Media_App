@@ -22,6 +22,7 @@ import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
+import Search from "./components/Search";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
@@ -33,7 +34,8 @@ const Main = () => {
       token: localStorage.getItem("appToken") || "",
       username: localStorage.getItem("appUsername") || "",
       avatar: localStorage.getItem("appAvatar") || ""
-    }
+    },
+    isSearchOpen: false
   };
 
   const reducer = (state, action) => {
@@ -47,6 +49,12 @@ const Main = () => {
         break;
       case "flashMessage":
         state.flashMessages.push(action.value);
+        break;
+      case "openSearch":
+        state.isSearchOpen = true;
+        break;
+      case "closeSearch":
+        state.isSearchOpen = false;
         break;
       default:
         return state;
@@ -99,6 +107,7 @@ const Main = () => {
               <NotFound />
             </Route>
           </Switch>
+          {state.isSearchOpen && <Search />}
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
