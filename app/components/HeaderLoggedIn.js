@@ -50,7 +50,7 @@ export default props => {
       <ReactToolTip id="profile" place="bottom" className="custom-tooltip" />{" "}
       <Link className="btn btn-sm btn-success mr-2" to="/create-post">
         Create Post
-      </Link>
+      </Link>{" "}
       <button className="btn btn-sm btn-secondary" onClick={handleLogOut}>
         Sign Out
       </button>
