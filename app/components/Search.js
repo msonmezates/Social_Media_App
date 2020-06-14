@@ -1,6 +1,28 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import DispatchContext from "../DispatchContext";
 
 export default () => {
+  const appDispatch = useContext(DispatchContext);
+
+  useEffect(() => {
+    document.addEventListener("keyup", searchKeyPressHandler);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("keyup", searchKeyPressHandler);
+    };
+  }, []);
+
+  const searchKeyPressHandler = e => {
+    if (e.code === "Escape" || e.keyCode === 27) {
+      appDispatch({ type: "closeSearch" });
+    }
+  };
+
+  const handleCloseIcon = () => {
+    appDispatch({ type: "closeSearch" });
+  };
+
   return (
     <div className="search-overlay">
       <div className="search-overlay-top shadow-sm">
@@ -16,7 +38,7 @@ export default () => {
             className="live-search-field"
             placeholder="What are you interested in?"
           />
-          <span className="close-live-search">
+          <span className="close-live-search" onClick={handleCloseIcon}>
             <i className="fas fa-times-circle"></i>
           </span>
         </div>
