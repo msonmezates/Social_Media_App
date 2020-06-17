@@ -28,7 +28,7 @@ export default () => {
       setState(draft => {
         draft.requestCount++;
       });
-    }, 3000);
+    }, 500);
 
     // Cleanup to handle api call
     // Don't make api call for every single character user types
@@ -38,7 +38,34 @@ export default () => {
   // Handle api call based on count
   useEffect(() => {
     if (state.requestCount) {
-      // make api call
+      // Create a cancel token
+      const myRequest = axios.CancelToken.source();
+
+      const fetchSearchResults = async () => {
+        try {
+          const response = await axios.post(
+            "/search",
+            {
+              searchTerm: state.searchTerm
+            },
+            {
+              cancelToken: myRequest.token
+            }
+          );
+
+          if (response?.data) {
+            setState(draft => {
+              draft.results = response.data;
+            });
+          }
+        } catch (e) {
+          console.error("Something went wrong", e);
+        }
+      };
+      fetchSearchResults();
+
+      // Clean up function
+      return () => myRequest.cancel();
     }
   }, [state.requestCount]);
 
