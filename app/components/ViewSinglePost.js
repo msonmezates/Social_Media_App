@@ -46,7 +46,7 @@ const ViewSinglePost = props => {
     return () => {
       ourRequest.cancel();
     };
-  }, []);
+  }, [postId]);
 
   if (notFound) {
     return <NotFound />;
