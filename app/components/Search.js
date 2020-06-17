@@ -24,15 +24,24 @@ export default () => {
 
   // Handle search
   useEffect(() => {
-    const delay = setTimeout(() => {
+    if (state.searchTerm.trim()) {
       setState(draft => {
-        draft.requestCount++;
+        draft.show = "loading";
       });
-    }, 500);
+      const delay = setTimeout(() => {
+        setState(draft => {
+          draft.requestCount++;
+        });
+      }, 3000);
 
-    // Cleanup to handle api call
-    // Don't make api call for every single character user types
-    return () => clearTimeout(delay);
+      // Cleanup to handle api call
+      // Don't make api call for every single character user types
+      return () => clearTimeout(delay);
+    } else {
+      setState(draft => {
+        draft.show = "neither";
+      });
+    }
   }, [state.searchTerm]);
 
   // Handle api call based on count
@@ -56,6 +65,7 @@ export default () => {
           if (response?.data) {
             setState(draft => {
               draft.results = response.data;
+              draft.show = "results";
             });
           }
         } catch (e) {
@@ -110,7 +120,18 @@ export default () => {
 
       <div className="search-overlay-bottom">
         <div className="container container--narrow py-3">
-          <div className="live-search-results live-search-results--visible">
+          <div
+            className={
+              "circle-loader " +
+              (state.show === "loading" ? "circle-loader--visible" : "")
+            }
+          ></div>
+          <div
+            className={
+              "live-search-results " +
+              (state.show === "results" ? "live-search-results--visible" : "")
+            }
+          >
             <div className="list-group shadow-sm">
               <div className="list-group-item active">
                 <strong>Search Results</strong> (30 items found)
