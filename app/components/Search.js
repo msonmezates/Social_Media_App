@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useImmer } from "use-immer";
 import DispatchContext from "../DispatchContext";
 import axios from "axios";
@@ -134,16 +135,31 @@ export default () => {
           >
             <div className="list-group shadow-sm">
               <div className="list-group-item active">
-                <strong>Search Results</strong> (30 items found)
+                <strong>Search Results</strong> ({state.results.length}{" "}
+                {state.results.length > 1 ? "items " : "item "}
+                found)
               </div>
-              <a href="#" className="list-group-item list-group-item-action">
-                <img
-                  className="avatar-tiny"
-                  src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128"
-                />{" "}
-                <strong>Example Post #1</strong>
-                <span className="text-muted small">by brad on 2/10/2020 </span>
-              </a>
+              {state.results.map(post => {
+                const date = new Date(post.createdDate);
+                const formattedDate = `${
+                  date.getMonth() + 1
+                }/${date.getDate()}/${date.getFullYear()}`;
+
+                return (
+                  <Link
+                    key={post._id}
+                    to={`/post/${post._id}`}
+                    className="list-group-item list-group-item-action"
+                    onClick={handleCloseIcon}
+                  >
+                    <img className="avatar-tiny" src={post.author.avatar} />
+                    <strong>{post.body}</strong>{" "}
+                    <span className="text-muted small">
+                      by {post.author.username} on {formattedDate}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
