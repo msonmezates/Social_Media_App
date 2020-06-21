@@ -59,7 +59,7 @@ export default () => {
     return () => {
       ourRequest.cancel();
     };
-  }, []);
+  }, [username]);
 
   // Handle start following api call
   useEffect(() => {
