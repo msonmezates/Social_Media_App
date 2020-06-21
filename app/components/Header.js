@@ -14,7 +14,7 @@ export default props => {
       <div className="container d-flex flex-column flex-md-row align-items-center p-3">
         <h4 className="my-0 mr-md-auto font-weight-normal">
           <Link to="/" className="text-white">
-            ComplexApp
+            MyApp
           </Link>
         </h4>
         {appState.isLoggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}

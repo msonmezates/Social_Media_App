@@ -19,7 +19,7 @@ export default () => (
     <p className="m-0">
       Copyright &copy; 2020{" "}
       <Link to="/" className="text-muted">
-        ComplexApp
+        MyApp
       </Link>
       . All rights reserved.
     </p>
