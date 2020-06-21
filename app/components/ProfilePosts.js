@@ -33,7 +33,7 @@ export default () => {
     return () => {
       ourRequest.cancel();
     };
-  }, []);
+  }, [username]);
 
   if (isLoading) return <Loader />;
 
