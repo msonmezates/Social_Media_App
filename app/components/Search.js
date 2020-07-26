@@ -1,8 +1,11 @@
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
+
 import { useImmer } from "use-immer";
-import DispatchContext from "../DispatchContext";
 import axios from "axios";
+
+import DispatchContext from "../DispatchContext";
+import Post from "./Post";
 
 export default () => {
   const appDispatch = useContext(DispatchContext);
@@ -140,27 +143,9 @@ export default () => {
                   {state.results.length > 1 ? "items " : "item "}
                   found)
                 </div>
-                {state.results.map(post => {
-                  const date = new Date(post.createdDate);
-                  const formattedDate = `${
-                    date.getMonth() + 1
-                  }/${date.getDate()}/${date.getFullYear()}`;
-
-                  return (
-                    <Link
-                      key={post._id}
-                      to={`/post/${post._id}`}
-                      className="list-group-item list-group-item-action"
-                      onClick={handleCloseIcon}
-                    >
-                      <img className="avatar-tiny" src={post.author.avatar} />
-                      <strong>{post.body}</strong>{" "}
-                      <span className="text-muted small">
-                        by {post.author.username} on {formattedDate}
-                      </span>
-                    </Link>
-                  );
-                })}
+                {state.results.map(post => (
+                  <Post key={post._id} post={post} onClick={handleCloseIcon} />
+                ))}
               </div>
             )}
 

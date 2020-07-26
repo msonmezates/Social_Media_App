@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+
 import axios from "axios";
 
 import Loader from "./Loader";
+import Post from "./Post";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,24 +41,9 @@ export default () => {
 
   return (
     <div className="list-group">
-      {posts.map(post => {
-        const date = new Date(post.createdDate);
-        const formattedDate = `${
-          date.getMonth() + 1
-        }/${date.getDate()}/${date.getFullYear()}`;
-
-        return (
-          <Link
-            key={post._id}
-            to={`/post/${post._id}`}
-            className="list-group-item list-group-item-action"
-          >
-            <img className="avatar-tiny" src={post.author.avatar} />
-            <strong>{post.body}</strong>{" "}
-            <span className="text-muted small">on {formattedDate}</span>
-          </Link>
-        );
-      })}
+      {posts.map(post => (
+        <Post key={post._id} post={post} noAuthor={true} />
+      ))}
     </div>
   );
 };

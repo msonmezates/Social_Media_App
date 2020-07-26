@@ -5,13 +5,12 @@ import { useImmer } from "use-immer";
 import axios from "axios";
 
 import StateContext from "../StateContext";
-import DispatchContext from "../DispatchContext";
 import Page from "./Page";
 import Loader from "./Loader";
+import Post from "./Post";
 
 export default () => {
   const appState = useContext(StateContext);
-  const appDispatch = useContext(DispatchContext);
 
   const { token } = appState.user;
   const [state, setState] = useImmer({
@@ -57,10 +56,6 @@ export default () => {
     return <Loader />;
   }
 
-  const handleCloseIcon = () => {
-    appDispatch({ type: "closeSearch" });
-  };
-
   return (
     <Page title="Your Feed">
       {!state.feed.length && (
@@ -81,27 +76,9 @@ export default () => {
         <>
           <h2 className="text-center mb-4">The Latest From Those You Follow</h2>
           <div className="list-group">
-            {state.feed.map(post => {
-              const date = new Date(post.createdDate);
-              const formattedDate = `${
-                date.getMonth() + 1
-              }/${date.getDate()}/${date.getFullYear()}`;
-
-              return (
-                <Link
-                  key={post._id}
-                  to={`/post/${post._id}`}
-                  className="list-group-item list-group-item-action"
-                  onClick={handleCloseIcon}
-                >
-                  <img className="avatar-tiny" src={post.author.avatar} />
-                  <strong>{post.body}</strong>{" "}
-                  <span className="text-muted small">
-                    by {post.author.username} on {formattedDate}
-                  </span>
-                </Link>
-              );
-            })}
+            {state.feed.map(post => (
+              <Post key={post._id} post={post} />
+            ))}
           </div>
         </>
       )}
