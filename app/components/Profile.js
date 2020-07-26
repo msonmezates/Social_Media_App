@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, NavLink, Switch, Route } from "react-router-dom";
 
 import axios from "axios";
 import { useImmer } from "use-immer";
@@ -195,17 +195,37 @@ export default () => {
       </h2>
 
       <div className="profile-nav nav nav-tabs pt-2 mb-4">
-        <a href="#" className="active nav-item nav-link">
+        <NavLink
+          exact
+          to={`/profile/${state.profileData.profileUsername}`}
+          className="nav-item nav-link"
+        >
           Posts: {state.profileData.counts.postCount}
-        </a>
-        <a href="#" className="nav-item nav-link">
+        </NavLink>
+        <NavLink
+          to={`/profile/${state.profileData.profileUsername}/followers`}
+          className="nav-item nav-link"
+        >
           Followers: {state.profileData.counts.followerCount}
-        </a>
-        <a href="#" className="nav-item nav-link">
+        </NavLink>
+        <NavLink
+          to={`/profile/${state.profileData.profileUsername}/following`}
+          className="nav-item nav-link"
+        >
           Following: {state.profileData.counts.followingCount}
-        </a>
+        </NavLink>
       </div>
-      <ProfilePosts />
+      <Switch>
+        <Route exact path="/profile/:username">
+          <ProfilePosts />
+        </Route>
+        <Route path="/profile/:username/followers">
+          <ProfilePosts />
+        </Route>
+        <Route path="/profile/:username/following">
+          <ProfilePosts />
+        </Route>
+      </Switch>
     </Page>
   );
 };
