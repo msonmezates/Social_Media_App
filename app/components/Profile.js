@@ -6,6 +6,7 @@ import { useImmer } from "use-immer";
 
 import Page from "./Page";
 import ProfilePosts from "./ProfilePosts";
+import ProfileFollow from "./ProfileFollow";
 import StateContext from "../StateContext";
 
 export default () => {
@@ -220,10 +221,10 @@ export default () => {
           <ProfilePosts />
         </Route>
         <Route path="/profile/:username/followers">
-          <ProfilePosts />
+          <ProfileFollow action="followers" />
         </Route>
         <Route path="/profile/:username/following">
-          <ProfilePosts />
+          <ProfileFollow action="following" />
         </Route>
       </Switch>
     </Page>
