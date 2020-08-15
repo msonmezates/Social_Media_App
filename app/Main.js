@@ -25,6 +25,7 @@ import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
 import Search from "./components/Search";
+import Chat from "./components/Chat";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
@@ -37,7 +38,8 @@ const Main = () => {
       username: localStorage.getItem("appUsername") || "",
       avatar: localStorage.getItem("appAvatar") || ""
     },
-    isSearchOpen: false
+    isSearchOpen: false,
+    isChatOpen: false
   };
 
   const reducer = (state, action) => {
@@ -57,6 +59,12 @@ const Main = () => {
         break;
       case "closeSearch":
         state.isSearchOpen = false;
+        break;
+      case "toggleChat":
+        state.isChatOpen = !state.isChatOpen;
+        break;
+      case "closeChat":
+        state.isChatOpen = false;
         break;
       default:
         return state;
@@ -117,6 +125,7 @@ const Main = () => {
           >
             <Search />
           </CSSTransition>
+          <Chat />
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
