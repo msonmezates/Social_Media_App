@@ -1,10 +1,20 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
 
 export default () => {
   const appState = useContext(StateContext);
   const appDisptach = useContext(DispatchContext);
+
+  const inputValue = useRef(null);
+
+  useEffect(() => {
+    if (appState.isChatOpen) {
+      console.log(inputValue.current);
+      inputValue.current.focus();
+    }
+  }, [appState.isChatOpen]);
+
   return (
     <div
       id="chat-wrapper"
@@ -57,6 +67,7 @@ export default () => {
           id="chatField"
           placeholder="Type a message…"
           autoComplete="off"
+          ref={inputValue}
         />
       </form>
     </div>
