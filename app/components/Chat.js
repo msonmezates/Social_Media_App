@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import StateContext from "../StateContext";
-import DispatchContext from "../DispatchContext";
+import { Link } from "react-router-dom";
 import { useImmer } from "use-immer";
 import io from "socket.io-client";
+
+import StateContext from "../StateContext";
+import DispatchContext from "../DispatchContext";
 
 const socket = io("http://localhost:8080");
 
@@ -11,6 +13,7 @@ export default () => {
   const appDisptach = useContext(DispatchContext);
 
   const inputValue = useRef(null);
+  const chatBox = useRef(null);
 
   const [state, setState] = useImmer({
     inputValue: "",
@@ -38,6 +41,11 @@ export default () => {
       });
     });
   }, []);
+
+  // Handle auto scroll down when new messages are added to chat
+  useEffect(() => {
+    chatBox.current.scrollTop = chatBox.current.scrollHeight;
+  }, [state.chatMessages]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -72,7 +80,7 @@ export default () => {
           <i className="fas fa-times-circle"></i>
         </span>
       </div>
-      <div id="chat" className="chat-log">
+      <div id="chat" className="chat-log" ref={chatBox}>
         {state.chatMessages.map((message, index) => {
           // if this is user typing
           if (message.username === appState.user.username) {
@@ -88,14 +96,14 @@ export default () => {
           // if the other person is typing
           return (
             <div className="chat-other" key={index}>
-              <a href="#">
+              <Link to={`/profile/${message.username}`}>
                 <img className="avatar-tiny" src={message.avatar} />
-              </a>
+              </Link>
               <div className="chat-message">
                 <div className="chat-message-inner">
-                  <a href="#">
-                    <strong>{message.username}:</strong>
-                  </a>
+                  <Link to={`/profile/${message.username}`}>
+                    <strong>{message.username}: </strong>
+                  </Link>
                   {message.message}
                 </div>
               </div>
