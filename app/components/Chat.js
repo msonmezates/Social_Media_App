@@ -24,6 +24,7 @@ export default () => {
     if (appState.isChatOpen) {
       console.log(inputValue.current);
       inputValue.current.focus();
+      appDisptach({ type: "clearUnreadChatCount" });
     }
   }, [appState.isChatOpen]);
 
@@ -45,6 +46,9 @@ export default () => {
   // Handle auto scroll down when new messages are added to chat
   useEffect(() => {
     chatBox.current.scrollTop = chatBox.current.scrollHeight;
+    if (!appState.isChatOpen && state.chatMessages.length) {
+      appDisptach({ type: "incrementUnreadChatCount" });
+    }
   }, [state.chatMessages]);
 
   const handleSubmit = e => {

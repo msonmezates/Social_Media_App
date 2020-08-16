@@ -39,7 +39,8 @@ const Main = () => {
       avatar: localStorage.getItem("appAvatar") || ""
     },
     isSearchOpen: false,
-    isChatOpen: false
+    isChatOpen: false,
+    unReadChatCount: 0
   };
 
   const reducer = (state, action) => {
@@ -65,6 +66,12 @@ const Main = () => {
         break;
       case "closeChat":
         state.isChatOpen = false;
+        break;
+      case "incrementUnreadChatCount":
+        state.unReadChatCount++;
+        break;
+      case "clearUnreadChatCount":
+        state.unReadChatCount = 0;
         break;
       default:
         return state;

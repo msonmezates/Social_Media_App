@@ -31,13 +31,22 @@ export default props => {
       </a>
       <ReactToolTip id="search" place="bottom" className="custom-tooltip" />{" "}
       <span
-        className="mr-2 header-chat-icon text-white"
+        className={
+          "mr-2 header-chat-icon " +
+          (appState.unReadChatCount ? "text-danger" : "text-white")
+        }
         data-tip="Chat"
         data-for="chat"
         onClick={() => appDispatch({ type: "toggleChat" })}
       >
         <i className="fas fa-comment"></i>
-        <span className="chat-count-badge text-white"> </span>
+        {appState.unReadChatCount ? (
+          <span className="chat-count-badge text-white">
+            {appState.unReadChatCount < 10 ? appState.unReadChatCount : "9+"}
+          </span>
+        ) : (
+          ""
+        )}
       </span>
       <ReactToolTip id="chat" place="bottom" className="custom-tooltip" />{" "}
       <Link
