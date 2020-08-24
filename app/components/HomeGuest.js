@@ -1,6 +1,8 @@
 import React from "react";
 import { useImmerReducer } from "use-immer";
 import axios from "axios";
+import { CSSTransition } from "react-transition-group";
+
 import Page from "./Page";
 
 export default () => {
@@ -30,12 +32,18 @@ export default () => {
   function myReducer(draft, action) {
     switch (action.type) {
       case "usernameImmediately":
-        const { value, hasErrors, message } = draft.username;
-        hasErrors = false;
-        value = action.value;
-        if (value.length > 30) {
-          hasErrors = true;
-          message = "Username cannot exceed 30 characters";
+        draft.username.hasErrors = false;
+        draft.username.value = action.value;
+        if (draft.username.value.length > 30) {
+          draft.username.hasErrors = true;
+          draft.username.message = "Username cannot exceed 30 characters";
+        }
+        if (
+          draft.username.value &&
+          !/^([a-zA-Z0-9]+)$/.test(draft.username.value)
+        ) {
+          draft.username.hasErrors = true;
+          draft.username.message = "Username cannot have special characters";
         }
         break;
       case "usernameAfterDelay":
@@ -111,6 +119,17 @@ export default () => {
                   })
                 }
               />
+              {/* Show error message */}
+              <CSSTransition
+                in={state.username.hasErrors}
+                timeout={330}
+                classNames="liveValidateMessage"
+                unmountOnExit
+              >
+                <div className="alert alert-danger small liveValidateMessage">
+                  {state.username.message}
+                </div>
+              </CSSTransition>
             </div>
             <div className="form-group">
               <label htmlFor="email-register" className="text-muted mb-1">
