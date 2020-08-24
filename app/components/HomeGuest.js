@@ -1,24 +1,82 @@
-import React, { useState } from "react";
-import Page from "./Page";
+import React from "react";
+import { useImmerReducer } from "use-immer";
 import axios from "axios";
+import Page from "./Page";
 
 export default () => {
-  const [username, setUsername] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const initialState = {
+    username: {
+      value: "",
+      hasErrors: false,
+      message: "",
+      isUnique: false,
+      checkCount: 0
+    },
+    email: {
+      value: "",
+      hasErrors: false,
+      message: "",
+      isUnique: false,
+      checkCount: 0
+    },
+    password: {
+      value: "",
+      hasErrors: false,
+      message: ""
+    },
+    submitCount: 0
+  };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    try {
-      await axios.post("/register", {
-        username,
-        email,
-        password
-      });
-      console.log("user was successfully created");
-    } catch (e) {
-      console.error("There was an error", e);
+  function myReducer(draft, action) {
+    switch (action.type) {
+      case "usernameImmediately":
+        const { value, hasErrors, message } = draft.username;
+        hasErrors = false;
+        value = action.value;
+        if (value.length > 30) {
+          hasErrors = true;
+          message = "Username cannot exceed 30 characters";
+        }
+        break;
+      case "usernameAfterDelay":
+        break;
+      case "usernameUniqueResults":
+        break;
+      case "emailImmediately":
+        draft.email.hasErrors = false;
+        draft.email.value = action.value;
+        break;
+      case "emailAfterDelay":
+        break;
+      case "emailUniqueResults":
+        break;
+      case "passwordImmediately":
+        draft.password.hasErrors = false;
+        draft.password.value = action.value;
+        break;
+      case "passwordAfterDelay":
+        break;
+      case "submitForm":
+        break;
+      default:
+        return draft;
     }
+  }
+
+  const [state, dispatch] = useImmerReducer(myReducer, initialState);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    // try {
+    //   await axios.post("/register", {
+    //     username,
+    //     email,
+    //     password
+    //   });
+    //   console.log("user was successfully created");
+    // } catch (e) {
+    //   console.error("There was an error", e);
+    // }
   };
 
   return (
@@ -46,7 +104,12 @@ export default () => {
                 type="text"
                 placeholder="Pick a username"
                 autoComplete="off"
-                onChange={e => setUsername(e.target.value)}
+                onChange={e =>
+                  dispatch({
+                    type: "usernameImmediately",
+                    value: e.target.value
+                  })
+                }
               />
             </div>
             <div className="form-group">
@@ -60,7 +123,9 @@ export default () => {
                 type="text"
                 placeholder="you@example.com"
                 autoComplete="off"
-                onChange={e => setEmail(e.target.value)}
+                onChange={e =>
+                  dispatch({ type: "emailImmediately", value: e.target.value })
+                }
               />
             </div>
             <div className="form-group">
@@ -73,7 +138,12 @@ export default () => {
                 className="form-control"
                 type="password"
                 placeholder="Create a password"
-                onChange={e => setPassword(e.target.value)}
+                onChange={e =>
+                  dispatch({
+                    type: "passwordImmediately",
+                    value: e.target.value
+                  })
+                }
               />
             </div>
             <button
