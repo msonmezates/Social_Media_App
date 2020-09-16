@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 import axios from "axios";
 import { CSSTransition } from "react-transition-group";
@@ -47,22 +47,58 @@ export default () => {
         }
         break;
       case "usernameAfterDelay":
+        if (draft.username.value.length < 3) {
+          draft.username.hasErrors = true;
+          draft.username.message = "Username must be at least 3 characters";
+        }
+        if (!draft.hasErrors) {
+          draft.username.checkCount++;
+        }
         break;
       case "usernameUniqueResults":
+        if (action.value) {
+          draft.username.hasErrors = true;
+          draft.username.isUnique = false;
+          draft.username.message = "That username is already taken";
+        } else {
+          draft.username.isUnique = true;
+        }
         break;
       case "emailImmediately":
         draft.email.hasErrors = false;
         draft.email.value = action.value;
         break;
       case "emailAfterDelay":
+        if (!/^\S+@\S+$/.test(draft.email.value)) {
+          draft.email.hasErrors = true;
+          draft.email.message = "You must provide a valid email address";
+        }
+        if (!draft.email.hasErrors) {
+          draft.email.checkCount++;
+        }
         break;
       case "emailUniqueResults":
+        if (action.value) {
+          draft.email.hasErrors = true;
+          draft.email.isUnique = false;
+          draft.email.message = "That email is already taken";
+        } else {
+          draft.email.isUnique = true;
+        }
         break;
       case "passwordImmediately":
         draft.password.hasErrors = false;
         draft.password.value = action.value;
+        if (draft.password.value.length > 50) {
+          draft.password.hasErrors = true;
+          draft.password.message = "Password cannot exceed 50 characters";
+        }
         break;
       case "passwordAfterDelay":
+        if (draft.password.value.length < 12) {
+          draft.password.hasErrors = true;
+          draft.password.message = "Password cannot be less than 12 characters";
+        }
         break;
       case "submitForm":
         break;
@@ -72,6 +108,100 @@ export default () => {
   }
 
   const [state, dispatch] = useImmerReducer(myReducer, initialState);
+
+  useEffect(() => {
+    if (state.username.value) {
+      const delay = setTimeout(
+        () => dispatch({ type: "usernameAfterDelay" }),
+        800
+      );
+      return () => clearTimeout(delay);
+    }
+  }, [state.username.value]);
+
+  useEffect(() => {
+    if (state.email.value) {
+      const delay = setTimeout(
+        () => dispatch({ type: "emailAfterDelay" }),
+        800
+      );
+      return () => clearTimeout(delay);
+    }
+  }, [state.email.value]);
+
+  useEffect(() => {
+    if (state.password.value) {
+      const delay = setTimeout(
+        () => dispatch({ type: "passwordAfterDelay" }),
+        800
+      );
+      return () => clearTimeout(delay);
+    }
+  }, [state.password.value]);
+
+  // Handle api call based on username check count
+  useEffect(() => {
+    if (state.username.checkCount) {
+      // Create a cancel token
+      const myRequest = axios.CancelToken.source();
+
+      const fetchSearchResults = async () => {
+        try {
+          const response = await axios.post(
+            "/doesUsernameExist",
+            {
+              username: state.username.value
+            },
+            {
+              cancelToken: myRequest.token
+            }
+          );
+
+          if (response?.data) {
+            dispatch({ type: "usernameUniqueResults", value: response.data });
+          }
+        } catch (e) {
+          console.error("Something went wrong", e);
+        }
+      };
+      fetchSearchResults();
+
+      // Clean up function
+      return () => myRequest.cancel();
+    }
+  }, [state.username.checkCount]);
+
+  // Handle api call based on email check count
+  useEffect(() => {
+    if (state.email.checkCount) {
+      // Create a cancel token
+      const myRequest = axios.CancelToken.source();
+
+      const fetchSearchResults = async () => {
+        try {
+          const response = await axios.post(
+            "/doesEmailExist",
+            {
+              email: state.email.value
+            },
+            {
+              cancelToken: myRequest.token
+            }
+          );
+
+          if (response?.data) {
+            dispatch({ type: "emailUniqueResults", value: response.data });
+          }
+        } catch (e) {
+          console.error("Something went wrong", e);
+        }
+      };
+      fetchSearchResults();
+
+      // Clean up function
+      return () => myRequest.cancel();
+    }
+  }, [state.email.checkCount]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -146,6 +276,17 @@ export default () => {
                   dispatch({ type: "emailImmediately", value: e.target.value })
                 }
               />
+              {/* Show error message */}
+              <CSSTransition
+                in={state.email.hasErrors}
+                timeout={330}
+                classNames="liveValidateMessage"
+                unmountOnExit
+              >
+                <div className="alert alert-danger small liveValidateMessage">
+                  {state.email.message}
+                </div>
+              </CSSTransition>
             </div>
             <div className="form-group">
               <label htmlFor="password-register" className="text-muted mb-1">
@@ -164,6 +305,17 @@ export default () => {
                   })
                 }
               />
+              {/* Show error message */}
+              <CSSTransition
+                in={state.password.hasErrors}
+                timeout={330}
+                classNames="liveValidateMessage"
+                unmountOnExit
+              >
+                <div className="alert alert-danger small liveValidateMessage">
+                  {state.password.message}
+                </div>
+              </CSSTransition>
             </div>
             <button
               type="submit"
