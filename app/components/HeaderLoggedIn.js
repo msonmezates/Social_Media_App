@@ -11,6 +11,10 @@ export default props => {
 
   const handleLogOut = () => {
     appDispatch({ type: "logout" });
+    appDispatch({
+      type: "flashMessage",
+      value: "You have successfully logged out"
+    });
   };
 
   const handleSearchIcon = e => {

@@ -17,8 +17,15 @@ export default props => {
       });
       if (response?.data) {
         appDispatch({ type: "login", value: response.data });
+        appDispatch({
+          type: "flashMessage",
+          value: "You have successfully logged in"
+        });
       } else {
-        console.log("incorrect entry");
+        appDispatch({
+          type: "flashMessage",
+          value: "Invalid username / password"
+        });
       }
     } catch (e) {
       console.error("There was an error", e);
