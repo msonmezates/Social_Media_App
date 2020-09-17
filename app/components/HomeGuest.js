@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { useImmerReducer } from "use-immer";
 import axios from "axios";
 import { CSSTransition } from "react-transition-group";
 
+import DispatchContext from "../DispatchContext";
 import Page from "./Page";
 
 export default () => {
+  const appDispatch = useContext(DispatchContext);
+
   const initialState = {
     username: {
       value: "",
@@ -51,7 +54,7 @@ export default () => {
           draft.username.hasErrors = true;
           draft.username.message = "Username must be at least 3 characters";
         }
-        if (!draft.hasErrors) {
+        if (!draft.username.hasErrors && action.noRequest) {
           draft.username.checkCount++;
         }
         break;
@@ -73,7 +76,7 @@ export default () => {
           draft.email.hasErrors = true;
           draft.email.message = "You must provide a valid email address";
         }
-        if (!draft.email.hasErrors) {
+        if (!draft.email.hasErrors && action.noRequest) {
           draft.email.checkCount++;
         }
         break;
@@ -101,6 +104,13 @@ export default () => {
         }
         break;
       case "submitForm":
+        if (
+          !draft.username.hasErrors &&
+          !draft.email.hasErrors &&
+          !draft.password.hasErrors
+        ) {
+          draft.submitCount++;
+        }
         break;
       default:
         return draft;
@@ -145,7 +155,7 @@ export default () => {
       // Create a cancel token
       const myRequest = axios.CancelToken.source();
 
-      const fetchSearchResults = async () => {
+      const checkUsername = async () => {
         try {
           const response = await axios.post(
             "/doesUsernameExist",
@@ -164,7 +174,7 @@ export default () => {
           console.error("Something went wrong", e);
         }
       };
-      fetchSearchResults();
+      checkUsername();
 
       // Clean up function
       return () => myRequest.cancel();
@@ -177,7 +187,7 @@ export default () => {
       // Create a cancel token
       const myRequest = axios.CancelToken.source();
 
-      const fetchSearchResults = async () => {
+      const checkEmail = async () => {
         try {
           const response = await axios.post(
             "/doesEmailExist",
@@ -196,7 +206,7 @@ export default () => {
           console.error("Something went wrong", e);
         }
       };
-      fetchSearchResults();
+      checkEmail();
 
       // Clean up function
       return () => myRequest.cancel();
@@ -205,17 +215,62 @@ export default () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // try {
-    //   await axios.post("/register", {
-    //     username,
-    //     email,
-    //     password
-    //   });
-    //   console.log("user was successfully created");
-    // } catch (e) {
-    //   console.error("There was an error", e);
-    // }
+    dispatch({ type: "usernameImmediately", value: state.username.value });
+    dispatch({
+      type: "usernameAfterDelay",
+      value: state.username.value,
+      noRequest: true
+    });
+    dispatch({ type: "emailImmediately", value: state.email.value });
+    dispatch({
+      type: "emailAfterDelay",
+      value: state.email.value,
+      noRequest: true
+    });
+    dispatch({ type: "passwordImmediately", value: state.password.value });
+    dispatch({
+      type: "passwordAfterDelay",
+      value: state.password.value
+    });
+    dispatch({ type: "submitForm" });
   };
+
+  // Handle api call based on email check count
+  useEffect(() => {
+    if (state.submitCount) {
+      // Create a cancel token
+      const myRequest = axios.CancelToken.source();
+      const sendForm = async () => {
+        try {
+          const response = await axios.post(
+            "/register",
+            {
+              username: state.username.value,
+              email: state.email.value,
+              password: state.password.value
+            },
+            {
+              cancelToken: myRequest.token
+            }
+          );
+
+          if (response?.data) {
+            appDispatch({ type: "login", value: response.data });
+            appDispatch({
+              type: "flashMessage",
+              value: "You are now registered!"
+            });
+          }
+        } catch (e) {
+          console.error("Something went wrong", e);
+        }
+      };
+      sendForm();
+
+      // Clean up function
+      return () => myRequest.cancel();
+    }
+  }, [state.submitCount]);
 
   return (
     <Page wide={true} title="Home">
