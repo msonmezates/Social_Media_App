@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useImmer } from "use-immer";
 import io from "socket.io-client";
@@ -6,9 +6,8 @@ import io from "socket.io-client";
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
 
-const socket = io("http://localhost:8080");
-
 export default () => {
+  const socket = useRef(null);
   const appState = useContext(StateContext);
   const appDisptach = useContext(DispatchContext);
 
@@ -36,11 +35,14 @@ export default () => {
   };
 
   useEffect(() => {
-    socket.on("chatFromServer", message => {
+    socket.current = io("http://localhost:8080");
+    socket.current.on("chatFromServer", message => {
       setState(draft => {
         draft.chatMessages.push(message);
       });
     });
+    // Clean up when user is logged out
+    return () => socket.current.disconnect();
   }, []);
 
   // Handle auto scroll down when new messages are added to chat
@@ -55,7 +57,7 @@ export default () => {
     e.preventDefault();
     const { username, avatar, token } = appState.user;
     // Send message to chat server
-    socket.emit("chatFromBrowser", {
+    socket.current.emit("chatFromBrowser", {
       message: state.inputValue,
       token
     });
