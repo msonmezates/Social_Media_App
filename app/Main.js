@@ -80,6 +80,43 @@ const Main = () => {
 
   const [state, dispatch] = useImmerReducer(reducer, initialState);
 
+  // Check if token has expired on first render
+  useEffect(() => {
+    if (state.isLoggedIn) {
+      // Create a cancel token
+      const myRequest = axios.CancelToken.source();
+
+      const fetchSearchResults = async () => {
+        try {
+          const response = await axios.post(
+            "/checkToken",
+            {
+              token: state.user.token
+            },
+            {
+              cancelToken: myRequest.token
+            }
+          );
+          if (!response?.data) {
+            dispatch({ type: "logout" });
+            dispatch({
+              type: "flashMessage",
+              value: "Your session has expired. Please log in again..."
+            });
+          }
+          if (response?.data) {
+          }
+        } catch (e) {
+          console.error("Something went wrong", e);
+        }
+      };
+      fetchSearchResults();
+
+      // Clean up function
+      return () => myRequest.cancel();
+    }
+  }, []);
+
   useEffect(() => {
     if (state.isLoggedIn) {
       localStorage.setItem("appToken", state.user.token);
