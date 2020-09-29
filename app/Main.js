@@ -29,7 +29,7 @@ const ViewSinglePost = React.lazy(() => import("./components/ViewSinglePost"));
 const Search = React.lazy(() => import("./components/Search"));
 const Chat = React.lazy(() => import("./components/Chat"));
 
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = process.env.BACKEND_URL || "";
 
 const Main = () => {
   const initialState = {
