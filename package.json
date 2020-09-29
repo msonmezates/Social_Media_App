@@ -1,12 +1,15 @@
 {
-  "name": "Social_Media_App",
+  "name": "social-media-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server",
+    "dev": "npm-run-all -s generate webpackDev",
+    "webpackDev": "webpack-dev-server",
+    "build": "npm-run-all -s generate webpackBuild",
     "webpackBuild": "webpack",
     "previewDist": "node previewDist",
+    "generate": "babel-node --presets=@babel/preset-react,@babel/preset-env generateHtml.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +25,7 @@
   "homepage": "https://github.com/msonmezates/Social_Media_App#readme",
   "dependencies": {
     "@babel/core": "^7.9.6",
+    "@babel/node": "^7.10.5",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "axios": "^0.19.2",
@@ -33,6 +37,7 @@
     "html-webpack-harddisk-plugin": "^1.0.2",
     "html-webpack-plugin": "^4.5.0",
     "immer": "^6.0.5",
+    "npm-run-all": "^4.1.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-markdown": "^4.3.1",

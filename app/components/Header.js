@@ -8,7 +8,11 @@ import StateContext from "../StateContext";
 
 export default props => {
   const appState = useContext(StateContext);
-
+  const headerContent = appState.isLoggedIn ? (
+    <HeaderLoggedIn />
+  ) : (
+    <HeaderLoggedOut />
+  );
   return (
     <header className="header-bar bg-primary mb-3">
       <div className="container d-flex flex-column flex-md-row align-items-center p-3">
@@ -17,7 +21,8 @@ export default props => {
             MyApp
           </Link>
         </h4>
-        {appState.isLoggedIn ? <HeaderLoggedIn /> : <HeaderLoggedOut />}
+        {/* If we're using static html, staticEmpty would be true and we wouldn't render js */}
+        {!props.staticEmpty ? headerContent : ""}
       </div>
     </header>
   );
